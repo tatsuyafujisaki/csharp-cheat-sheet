@@ -1,0 +1,39 @@
+@startuml CollectionDecisionTree
+if (Need FIFO?) then (Yes)
+  :Queue;
+else (No)
+  if (Need LIFO?) then (Yes)
+    :Stack;
+  else (No)
+    if (Need to have unique elements?) then (Yes)
+      if (Need key-value pairs?) then (Yes)
+        if (Need to be accssed by index?) then (Yes)
+          if (Need to be sorted?) then (Yes)
+            :SortedList;
+          else (No)
+            :(No suitable collection);
+          endif
+        else (No)
+          if (Need to be sorted?) then (Yes)
+            :SortedDictionary;
+          else (No)
+            :Dictionary;
+          endif
+        endif
+      else (No)
+        if (Need to be sorted?) then (Yes)
+          :SortedSet;
+        else (No)
+          :HashSet;
+        endif
+      endif
+    else (No)
+      if (Fixed length?) then (Yes)
+        :Array;
+      else (No)
+        :List;
+      endif
+    endif
+  endif
+endif
+@enduml

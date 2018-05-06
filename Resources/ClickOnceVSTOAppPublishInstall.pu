@@ -1,0 +1,19 @@
+@startuml ClickOnceVSTOAppPublishInstall
+:A developer publishes a ClickOnce VSTO app, with the release built, whose AssemblyName is AN1 and ProductName is PN1.;
+: bin\Release\app.publish\AN1.vsto and "bin\Release\app.publish\Application Files" are automatically created under the folder where .csproj exists.;
+:The developer moves AN1.vsto to "Application Files" to \\\\Foo\\Bar.;
+:A user double-clicks on \\\\Foo\\Bar\AN1.vsto.;
+if (Is AN1.vsto already installed?) then (Yes)
+  if (Is the absolute path of AN1.vsto the same as the last installation? Note that ClickOnce regards UNC paths and drive-lettered paths as different ones.) then (Yes)
+    if(Is the ProductName the same as the last installation?) then (Yes)
+      :Successful installation! Note that if an app whose ProductName is PN1 is already installed, multiple PN1 appear in Programs and Features.;
+    else (No)
+      :Successful installation! Note that PN1 replaces the old ProductName in Programs and Features. Also, note that if an app whose ProductName is PN1 is already installed, multiple PN1 appear in Programs and Features.;
+    endif
+  else (No)
+    :Error! Uninstall the old AN1.vsto.;
+  endif
+else (No)
+  : Successful installation! Note that if an app whose ProductName is PN1 is already installed, multiple PN1 appear in Programs and Features.;
+endif
+@enduml
