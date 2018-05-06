@@ -51,6 +51,27 @@ namespace CheatSheet.Algorithm
             ? xs.Select(x => new T[] { x })
             : xs.SelectMany((x, i) => CombineWithRepetition(xs.Skip(i), k - 1).Select(resultRow => (new[] { x }).Concat(resultRow)));
 
+        // If the number of elements of the result row is 3 ...
+        // listsOfCandidates[0] ... Candidates the first element
+        // listsOfCandidates[1] ... Candidates the second element
+        // listsOfCandidates[2] ... Candidates the third element
+        static IEnumerable<IEnumerable<T>> Combine<T>(IEnumerable<HashSet<T>> listsOfCandidates)
+        {
+            IEnumerable<IEnumerable<T>> Combine_(IEnumerable<IEnumerable<T>> resultRows, IEnumerable<HashSet<T>> listsOfCandidates_)
+            {
+                if (listsOfCandidates_.Any())
+                {
+                    var candidates = listsOfCandidates_.First();
+                    listsOfCandidates_ = listsOfCandidates_.Skip(1);
+                    return candidates.SelectMany(candidateElement => Combine_(resultRows.Select(resultRow => resultRow.Concat(new[] { candidateElement })), listsOfCandidates_));
+                }
+
+                return resultRows;
+            }
+
+            return Combine_(new List<List<T>> { new List<T>() }, listsOfCandidates);
+        }
+
         internal static void DemonstratePermutation<T>(IEnumerable<T> xs, int k)
         {
             foreach (var ys in Permutate(xs, k))
