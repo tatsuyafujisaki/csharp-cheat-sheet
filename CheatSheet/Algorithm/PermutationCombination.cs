@@ -51,48 +51,145 @@ namespace CheatSheet.Algorithm
             ? xs.Select(x => new T[] { x })
             : xs.SelectMany((x, i) => CombineWithRepetition(xs.Skip(i), k - 1).Select(resultRow => (new[] { x }).Concat(resultRow)));
 
-        // If the number of elements of the result row is 3 ...
-        // listsOfCandidates[0] ... Candidates the first element
-        // listsOfCandidates[1] ... Candidates the second element
-        // listsOfCandidates[2] ... Candidates the third element
-        static IEnumerable<IEnumerable<T>> Combine<T>(IEnumerable<HashSet<T>> listsOfCandidates)
+        // Result:
+        // A B
+        // A C
+        // B A
+        // B C
+        // C A
+        // C B
+        internal static void DemonstratePermutation()
         {
-            IEnumerable<IEnumerable<T>> Combine_(IEnumerable<IEnumerable<T>> resultRows, IEnumerable<HashSet<T>> listsOfCandidates_)
+            var ss = new List<string> { "A", "B", "C" };
+
+            foreach (var xs in Permutate(ss, 2))
             {
-                if (listsOfCandidates_.Any())
+                Console.WriteLine(string.Join(" ", xs));
+            }
+        }
+
+        // Result:
+        // A B
+        // A C
+        // B C
+        internal static void DemonstrateCombinationWithoutRepetition()
+        {
+            var ss = new List<string> { "A", "B", "C" };
+
+            foreach (var xs in CombineWithoutRepetition(ss, 2))
+            {
+                Console.WriteLine(string.Join(" ", xs));
+            }
+        }
+
+        // Result:
+        // A A
+        // A B
+        // A C
+        // B B
+        // B C
+        // C C
+        internal static void DemonstrateCombinationWithRepetition()
+        {
+            var ss = new List<string> { "A", "B", "C" };
+
+            foreach (var xs in CombineWithRepetition(ss, 2))
+            {
+                Console.WriteLine(string.Join(" ", xs));
+            }
+        }
+
+        // Create 
+        // If the number of elements of the result row is 3 ...
+        // listsOfCandidates[0] ... Candidates for the first element
+        // listsOfCandidates[1] ... Candidates for the second element
+        // listsOfCandidates[2] ... Candidates for the third element
+        static IEnumerable<IEnumerable<T>> CreateRows<T>(IEnumerable<HashSet<T>> listsOfCandidates)
+        {
+            IEnumerable<IEnumerable<T>> CreateRows_(IEnumerable<IEnumerable<T>> resultRows, IEnumerable<HashSet<T>> listsOfCandidateElements_)
+            {
+                if (listsOfCandidateElements_.Any())
                 {
-                    var candidates = listsOfCandidates_.First();
-                    listsOfCandidates_ = listsOfCandidates_.Skip(1);
-                    return candidates.SelectMany(candidateElement => Combine_(resultRows.Select(resultRow => resultRow.Concat(new[] { candidateElement })), listsOfCandidates_));
+                    var candidateElements = listsOfCandidateElements_.First();
+                    listsOfCandidateElements_ = listsOfCandidateElements_.Skip(1);
+                    return candidateElements.SelectMany(candidateElement => CreateRows_(resultRows.Select(resultRow => resultRow.Concat(new[] { candidateElement })), listsOfCandidateElements_));
                 }
 
                 return resultRows;
             }
 
-            return Combine_(new List<List<T>> { new List<T>() }, listsOfCandidates);
+            return CreateRows_(new List<List<T>> { new List<T>() }, listsOfCandidates);
         }
 
-        internal static void DemonstratePermutation<T>(IEnumerable<T> xs, int k)
+        static IEnumerable<string> CreateWords(IEnumerable<IEnumerable<char>> listsOfCandidateChars)
         {
-            foreach (var ys in Permutate(xs, k))
+            IEnumerable<string> CreateWords_(IEnumerable<string> words, IEnumerable<IEnumerable<char>> listOfCandidateChars_)
             {
-                Console.WriteLine(string.Join(" ", ys));
+                if (listOfCandidateChars_.Any())
+                {
+                    var candidateChars = listOfCandidateChars_.First();
+                    listOfCandidateChars_ = listOfCandidateChars_.Skip(1);
+
+                    return candidateChars.SelectMany(candidateChar => CreateWords_(words.Select(word => word + candidateChar), listOfCandidateChars_));
+                }
+
+                return words;
+            }
+
+            return CreateWords_(new[] { "" }, listsOfCandidateChars);
+        }
+
+        // Result:
+        // 1 3 5
+        // 1 3 6
+        // 1 4 5
+        // 1 4 6
+        // 2 3 5
+        // 2 3 6
+        // 2 4 5
+        // 2 4 6
+        internal static void DemonstrateCreateRows()
+        {
+            var listsOfCandidates = new List<HashSet<char>>
+            {
+                new HashSet<char> { '1', '2' },
+                new HashSet<char> { '3', '4' },
+                new HashSet<char> { '5', '6' }
+            };
+
+            foreach (var tokens in CreateRows(listsOfCandidates))
+            {
+                foreach (var token in tokens)
+                {
+                    Console.Write(token + " ");
+
+                }
+
+                Console.WriteLine();
             }
         }
 
-        internal static void DemonstrateCombinationWithoutRepetition<T>(IEnumerable<T> xs, int k)
+        // Result:
+        // ACE
+        // ACF
+        // ADE
+        // ADF
+        // BCE
+        // BCF
+        // BDE
+        // BDF
+        internal static void DemonstrateCreateWords()
         {
-            foreach (var ys in CombineWithoutRepetition(xs, k))
+            var listsOfCandidates = new List<HashSet<char>>
             {
-                Console.WriteLine(string.Join(" ", ys));
-            }
-        }
+                new HashSet<char> { 'A', 'B' },
+                new HashSet<char> { 'C', 'D' },
+                new HashSet<char> { 'E', 'F' }
+            };
 
-        internal static void DemonstrateCombinationWithRepetition<T>(IEnumerable<T> xs, int k)
-        {
-            foreach (var ys in CombineWithRepetition(xs, k))
+            foreach (var word in CreateWords(listsOfCandidates))
             {
-                Console.WriteLine(string.Join(" ", ys));
+                Console.WriteLine(word);
             }
         }
     }
