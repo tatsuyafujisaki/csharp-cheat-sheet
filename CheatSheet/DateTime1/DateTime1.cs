@@ -1,3 +1,4 @@
+using CheatSheet.Factory;
 using System;
 using System.Globalization;
 using System.IO;
@@ -20,9 +21,9 @@ namespace CheatSheet.DateTime1
 
         static (bool, DateTime) TryParse(string s, string format) => ValueTuple.Create(DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt), dt);
 
-        static string GetAbbreviatedEnglishMonthName(DateTime dt) => dt.ToString("MMM", new CultureInfo("en-US"));
-        static string GetFullEnglishMonthName(DateTime dt) => dt.ToString("MMMM", new CultureInfo("en-US"));
-        static string GetJapaneseDayOfWeek(DateTime dt) => dt.ToString("ddd", new CultureInfo("ja-JP"));
+        static string GetAbbreviatedEnglishMonthName(DateTime dt) => dt.ToString("MMM", Flyweight.GetCultureInfo("en-US"));
+        static string GetFullEnglishMonthName(DateTime dt) => dt.ToString("MMMM", Flyweight.GetCultureInfo(("en-US")));
+        static string GetJapaneseDayOfWeek(DateTime dt) => dt.ToString("ddd", Flyweight.GetCultureInfo("ja-JP"));
 
         static DateTime GetValidDate(int year, int month, int day) => new DateTime(year, month, Math.Min(DateTime.DaysInMonth(year, month), day));
 

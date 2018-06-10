@@ -1,3 +1,4 @@
+using CheatSheet.Factory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -148,6 +149,21 @@ namespace CheatSheet
             {
                 d.Remove(kvp.Key);
             }
+        }
+
+        // Simpler alternative: DateTime.Now.ToString("yyyyMMdd-hhmmss.fffffff")
+        internal static string GenerateRandomAlphanumerics(int length)
+        {
+            const string Alphanumerics = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+            var cs = new char[length];
+
+            for (var i = 0; i < length; i++)
+            {
+                cs[i] = Alphanumerics[Singleton.GetRandom().Next(Alphanumerics.Length)];
+            }
+
+            return new string(cs);
         }
     }
 }

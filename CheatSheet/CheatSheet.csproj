@@ -110,6 +110,7 @@
     <Compile Include="Db1\Db.cs" />
     <Compile Include="DateTime1\DateTime1.cs" />
     <Compile Include="Db1\SqlFactory.cs" />
+    <Compile Include="Factory\Flyweight.cs" />
     <Compile Include="MultiMap.cs" />
     <Compile Include="Enum1.cs" />
     <Compile Include="Io.cs" />
@@ -124,8 +125,7 @@
     <Compile Include="Office\Outlook1.cs" />
     <Compile Include="Office\Word1.cs" />
     <Compile Include="Poller\ProcessPoller.cs" />
-    <Compile Include="RandomAlphanumerics.cs" />
-    <Compile Include="Singleton.cs" />
+    <Compile Include="Factory\Singleton.cs" />
     <Compile Include="TemporaryDirectory.cs" />
     <Compile Include="TemporaryFile.cs" />
     <Compile Include="U.cs" />
