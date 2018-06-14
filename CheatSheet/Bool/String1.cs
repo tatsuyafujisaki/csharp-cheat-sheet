@@ -18,7 +18,7 @@ namespace CheatSheet.Bool
         internal static bool ContainsIgnoreCase(IEnumerable<string> ss, string s) => ss.Contains(s, StringComparer.OrdinalIgnoreCase);
 
         // Cannot make it generic as '==' is unavailable for a generic type.
-        static bool AreSame(IEnumerable<int> xs) => xs.All(x => x == xs.First());
+        static bool IsAllSame(IEnumerable<int> xs) => xs.All(x => x == xs.First());
 
         // s.All(...) returns true if s is an empty string.
         static bool IsLetter(string s) => !string.IsNullOrEmpty(s) && s.All(char.IsLetter);
@@ -34,7 +34,9 @@ namespace CheatSheet.Bool
         // Third fastest
         // => Regex.IsMatch(s, @"^[\d]+$");
 
-        static bool AreFourDigits(string s) => Regex.IsMatch(s, @"^[\d]{4}$");
+        static bool IsOneToFiveDigits(string s) => Regex.IsMatch(s, @"^[a-zA-Z]{1,5}$");
+
+        static bool IsFourDigits(string s) => Regex.IsMatch(s, @"^[\d]{4}$");
 
         // s.All(...) returns true if s is an empty string.
         static bool IsAlphanumeric(string s) => !string.IsNullOrEmpty(s) && s.All(char.IsLetterOrDigit);
@@ -76,8 +78,5 @@ namespace CheatSheet.Bool
         // => x is DBNull;
         // Third fastest 
         // => Convert.IsDBNull(x);
-
-        static bool IsExcel(string extension) => ContainsIgnoreCase(new[] { ".xlm", ".xls", ".xlsb", ".xlsm", ".xlsx", ".xlt", ".xltm", ".xltx" }, extension);
-        static bool IsWord(string extension) => ContainsIgnoreCase(new[] { ".doc", ".docb", ".docm", ".docx", ".dot", ".dotm", ".dotx" }, extension);
     }
 }
