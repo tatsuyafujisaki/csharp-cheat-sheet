@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Data.SqlClient;
 
-namespace CheatSheet.Db1
+namespace CheatSheet.Database1
 {
     public enum DeploymentEnvironment
     {

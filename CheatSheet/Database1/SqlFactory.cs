@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace CheatSheet.Db1
+namespace CheatSheet.Database1
 {
     static class SqlFactory
     {

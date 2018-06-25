@@ -22,7 +22,7 @@ namespace CheatSheet.Bool
 
         internal static bool IsEmptyDirectory(string path) => !Directory.EnumerateFileSystemEntries(path).Any();
 
-        static bool HasExtension(string path, string extension) => String1.EqIgnoreCase(Path.GetExtension(path), extension);
+        static bool HasExtension(string path, string extension) => String1.EqualsIgnoreCase(Path.GetExtension(path), extension);
 
         // Explanatory wrapper
         static bool IsRelativePath(string path) => !Path.IsPathRooted(path);

@@ -5,13 +5,13 @@ using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
 
-namespace CheatSheet.Db1
+namespace CheatSheet.Database1
 {
-    static class Db
+    static class Database
     {
         static readonly SqlConnectionStringBuilder Scsb;
 
-        static Db()
+        static Database()
         {
             switch (ConnectionStringFactory.GetDeploymentEnvironment())
             {
@@ -25,6 +25,13 @@ namespace CheatSheet.Db1
                     Scsb = ConnectionStringFactory.Create(DatabaseServer.Development, "Database2");
                     break;
             }
+        }
+
+        static string GetConnectionStringWithoutPassword()
+        {
+            var scsb = new SqlConnectionStringBuilder(Scsb.ToString());
+            scsb.Remove("Password");
+            return scsb.ToString();
         }
 
         static T GetValue<T>(int id)

@@ -2,12 +2,13 @@
 using log4net;
 using System;
 using System.Deployment.Application;
+using System.Reflection;
 
 namespace CheatSheet
 {
     static class Program
     {
-        static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
+        static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         static void Main()
         {

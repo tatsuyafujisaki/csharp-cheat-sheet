@@ -9,7 +9,7 @@ namespace CheatSheet.Bool
 {
     static class String1
     {
-        internal static bool EqIgnoreCase(string s1, string s2) => string.Equals(s1, s2, StringComparison.OrdinalIgnoreCase);
+        internal static bool EqualsIgnoreCase(string s1, string s2) => string.Equals(s1, s2, StringComparison.OrdinalIgnoreCase);
         // The following does not support s1 being null.
         // s1.Equals(s2, StringComparison.OrdinalIgnoreCase);
 

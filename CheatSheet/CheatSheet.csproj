@@ -106,10 +106,10 @@
     <Compile Include="Converter.cs" />
     <Compile Include="DataTableView.cs" />
     <Compile Include="DateTime1\HourMinute.cs" />
-    <Compile Include="Db1\ConnectionStringFactory.cs" />
-    <Compile Include="Db1\Db.cs" />
+    <Compile Include="Database1\ConnectionStringFactory.cs" />
+    <Compile Include="Database1\Database.cs" />
     <Compile Include="DateTime1\DateTime1.cs" />
-    <Compile Include="Db1\SqlFactory.cs" />
+    <Compile Include="Database1\SqlFactory.cs" />
     <Compile Include="Factory\Flyweight.cs" />
     <Compile Include="MultiMap.cs" />
     <Compile Include="Enum1.cs" />
