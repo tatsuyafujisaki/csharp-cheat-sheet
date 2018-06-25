@@ -111,6 +111,6 @@ namespace CheatSheet
 
         static string GetGuid() => ((GuidAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value;
 
-        static string GetLogPath => ((Hierarchy)LogManager.GetRepository()).Root.Appenders.OfType<RollingFileAppender>().First().File;
+        internal static string GetLogPath() => ((Hierarchy)LogManager.GetRepository()).Root.Appenders.OfType<RollingFileAppender>().First().File;
     }
 }
