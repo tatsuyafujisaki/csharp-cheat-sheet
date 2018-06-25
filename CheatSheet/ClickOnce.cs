@@ -11,7 +11,7 @@ namespace CheatSheet
     {
         DotApplication, // .application cannot take any argument.
         DotApprefMsWithoutArgument,
-        DotApprefMsWithArgument,
+        DotApprefMsWithArgument, // .appref-ms
     }
 
     static class ClickOnce
@@ -22,21 +22,18 @@ namespace CheatSheet
             {
                 return LaunchType.DotApprefMsWithoutArgument;
             }
-            else if (AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData[0].EndsWith(".application"))
+
+            if (AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData[0].EndsWith(".application"))
             {
                 return LaunchType.DotApplication;
             }
-            else
-            {
-                return LaunchType.DotApprefMsWithArgument;
-            }
+
+            return LaunchType.DotApprefMsWithArgument;
         }
 
-        internal static string GetArgument()
+        internal static string GetArguments()
         {
-            var lt = GetLaunchType();
-
-            switch (lt)
+            switch (GetLaunchType())
             {
                 case LaunchType.DotApplication:
                 case LaunchType.DotApprefMsWithoutArgument:
@@ -44,35 +41,33 @@ namespace CheatSheet
                 case LaunchType.DotApprefMsWithArgument:
                     return AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData[0];
                 default:
-                    throw new InvalidEnumArgumentException(nameof(lt), (int)lt, typeof(LaunchType));
+                    throw new InvalidEnumArgumentException();
             }
-        }
-
-        static DeployManifest GetDeployManifest()
-        {
-            if (!ApplicationDeployment.IsNetworkDeployed)
-            {
-                return null;
-            }
-
-            // Microsoft.Build.Tasks.Core
-            using (var ms = new MemoryStream(AppDomain.CurrentDomain.ActivationContext.DeploymentManifestBytes))
-            {
-                return (DeployManifest)ManifestReader.ReadManifest("Deployment", ms, false);
-            }
-        }
-
-        static string GetApprefMsPath()
-        {
-            var dp = GetDeployManifest();
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), dp.Publisher, dp.SuiteName, dp.Product + ".appref-ms");
         }
 
         internal static void StartSelf()
         {
-            var lt = GetLaunchType();
+            string GetApprefMsPath()
+            {
+                DeployManifest GetDeployManifest()
+                {
+                    if (!ApplicationDeployment.IsNetworkDeployed)
+                    {
+                        return null;
+                    }
 
-            switch (lt)
+                    // Microsoft.Build.Tasks.Core.dll
+                    using (var ms = new MemoryStream(AppDomain.CurrentDomain.ActivationContext.DeploymentManifestBytes))
+                    {
+                        return (DeployManifest)ManifestReader.ReadManifest("Deployment", ms, false);
+                    }
+                }
+
+                var dp = GetDeployManifest();
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), dp.Publisher, dp.SuiteName, dp.Product + ".appref-ms");
+            }
+
+            switch (GetLaunchType())
             {
                 case LaunchType.DotApplication:
                     Process.Start(ApplicationDeployment.CurrentDeployment.UpdateLocation.AbsoluteUri);
@@ -84,7 +79,7 @@ namespace CheatSheet
                     Process.Start(GetApprefMsPath(), AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData[0]);
                     break;
                 default:
-                    throw new InvalidEnumArgumentException(nameof(lt), (int)lt, typeof(LaunchType));
+                    throw new InvalidEnumArgumentException();
             }
         }
     }

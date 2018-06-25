@@ -3,6 +3,7 @@ using log4net;
 using System;
 using System.Deployment.Application;
 using System.Reflection;
+using System.Text;
 
 namespace CheatSheet
 {
@@ -26,16 +27,23 @@ namespace CheatSheet
 
                 if (ApplicationDeployment.CurrentDeployment.CheckForUpdate() && ApplicationDeployment.CurrentDeployment.Update())
                 {
-                    Logger.InfoFormat("Updating to ClickOnce Publish Version {0} ...", ApplicationDeployment.CurrentDeployment.UpdatedVersion);
+                    Logger.InfoFormat("Updates self to ClickOnce Publish Version {0}", ApplicationDeployment.CurrentDeployment.UpdatedVersion);
                     ClickOnce.StartSelf();
                     return;
                 }
 
-                var argument = ClickOnce.GetArgument();
+                var arguments = ClickOnce.GetArguments();
             }
+        }
 
-            Console.WriteLine("Press any key to continue ..."); // The same message as from the "pause" command of batch programs.
-            Console.ReadKey();
+        static void PrintUsage()
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("Usage 1: {0} Foo");
+            sb.AppendLine("Usage 1: {0} Bar");
+
+            Console.WriteLine(sb.ToString(), AppDomain.CurrentDomain.FriendlyName);
         }
     }
 }
