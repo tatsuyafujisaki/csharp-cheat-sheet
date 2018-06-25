@@ -10,8 +10,18 @@ namespace CheatSheet.Bool
     static class String1
     {
         internal static bool EqualsIgnoreCase(string s1, string s2) => string.Equals(s1, s2, StringComparison.OrdinalIgnoreCase);
-        // The following does not support s1 being null.
+        // The following throws an error when s1 is null.
         // s1.Equals(s2, StringComparison.OrdinalIgnoreCase);
+
+        internal static bool EqualsIgnoreCase(HashSet<string> hs, IEnumerable<string> ss)
+        {
+            if (hs.Comparer != StringComparer.OrdinalIgnoreCase)
+            {
+                hs = new HashSet<string>(hs, StringComparer.OrdinalIgnoreCase);
+            }
+
+            return hs.SetEquals(ss);
+        }
 
         static bool StartsWithIgnoreCase(string s1, string s2) => s1.StartsWith(s2, StringComparison.OrdinalIgnoreCase);
         static bool ContainsIgnoreCase(string s, string findMe) => -1 < s.IndexOf(findMe, StringComparison.OrdinalIgnoreCase);

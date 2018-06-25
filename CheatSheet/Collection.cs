@@ -289,9 +289,11 @@ namespace CheatSheet
         }
 
         // Reference System.Collecitons.Immutable if ImmutableHashSet is necessary.
-        static class HashSet1
+        internal static class HashSet1
         {
-            static HashSet<T> DeepCopy<T>(IEnumerable<T> hs) => new HashSet<T>(hs);
+            internal static HashSet<string> CreateHashSetIgnoreCase() => new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            internal static HashSet<string> CreateHashSetIgnoreCase(IEnumerable<string> ss) => new HashSet<string>(ss, StringComparer.OrdinalIgnoreCase);
+            internal static HashSet<T> DeepCopy<T>(IEnumerable<T> hs) => new HashSet<T>(hs);
         }
     }
 }
