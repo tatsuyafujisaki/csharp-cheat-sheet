@@ -1,7 +1,6 @@
-﻿using CheatSheet.Office;
+﻿using CheatSheet.Bool;
 using log4net;
 using System;
-using System.Collections.Generic;
 using System.Deployment.Application;
 using System.Diagnostics;
 using System.Linq;
@@ -16,65 +15,62 @@ namespace CheatSheet
 
         static int Main(string[] args)
         {
-            Process1.KillOldSelf();
-
-            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+            try
             {
-                Logger.Error(e.ExceptionObject);
-                Outlook1.Create(new[] { "administrator@example.com" }, null, $"{Meta.GetApplicationName()} Error by {Environment.UserName} on {Environment.MachineName} at {DateTime.Now:yyyy-MM-dd HH:mm}", e.ExceptionObject.ToString());
-            };
+                Logger.InfoFormat("Starts with arguments: {0}", string.Join(" ", args));
 
-            #region NonClickOnceApplicationOnly
+                Process1.KillOldSelf();
 
-            Logger.InfoFormat("Starts with arguments: {0}", string.Join(" ", args));
+                //AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+                //{
+                //    Logger.Error(e);
+                //    Outlook1.Create(new[] { "administrator@example.com" }, null, $"{Meta.GetApplicationName()} Error by {Environment.UserName} on {Environment.MachineName} at {DateTime.Now:yyyy-MM-dd HH:mm}", e.ExceptionObject.ToString());
+                //};
 
-            var validArguments = new HashSet<string>(new[] { "Foo", "Bar" }, StringComparer.OrdinalIgnoreCase);
-            var arguments = new HashSet<string>(args, StringComparer.OrdinalIgnoreCase);
+                #region NonClickOnceOnly
 
-            if (!arguments.Any())
-            {
-                PrintUsage();
-                Logger.Error("Exits with 1 because of no arguments");
-                return 1;
-            }
-
-            if (!arguments.IsSubsetOf(validArguments))
-            {
-                PrintUsage();
-                Logger.Error("Exits with 1 because not all arguments are valid");
-                return 1;
-            }
-
-            #endregion NonClickOnceApplicationOnly
-
-            #region ClickOnceApplicationOnly
-
-            if (ApplicationDeployment.IsNetworkDeployed)
-            {
-                Logger.InfoFormat("ClickOnce Publish Version: {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
-
-                if (ApplicationDeployment.CurrentDeployment.CheckForUpdate() && ApplicationDeployment.CurrentDeployment.Update())
+                if (!args.Any() || !String1.ContainsIgnoreCase(new[] { "Foo", "Bar" }, args[0]))
                 {
-                    Logger.InfoFormat("Updates self to ClickOnce Publish Version: {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
+                    var sb = new StringBuilder();
 
-                    Process.Start(ApplicationDeployment.CurrentDeployment.UpdateLocation.AbsoluteUri);
+                    sb.AppendLine("Usage 1: {0} Foo");
+                    sb.AppendLine("Usage 1: {0} Bar");
+
+                    Console.WriteLine(sb.ToString(), AppDomain.CurrentDomain.FriendlyName);
+
+                    throw new ArgumentOutOfRangeException(string.Join(" ", args));
                 }
+
+                #endregion NonClickOnceOnly
+
+                #region ClickOnceOnly
+
+                if (ApplicationDeployment.IsNetworkDeployed)
+                {
+                    Logger.InfoFormat("ClickOnce Publish Version: {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
+
+                    if (ApplicationDeployment.CurrentDeployment.CheckForUpdate() && ApplicationDeployment.CurrentDeployment.Update())
+                    {
+                        Logger.InfoFormat("Updates self to ClickOnce Publish Version: {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
+
+                        Process.Start(ApplicationDeployment.CurrentDeployment.UpdateLocation.AbsoluteUri);
+                    }
+                }
+
+                #endregion ClickOnceOnly
+
+                Logger.Info("Exits with 0");
+
+                return 0;
             }
+            catch (Exception e)
+            {
+                Logger.Error(e);
 
-            #endregion ClickOnceApplicationOnly
+                Logger.Info("Exists with 1");
 
-            Logger.Info("Exits with 0");
-            return 0;
-        }
-
-        static void PrintUsage()
-        {
-            var sb = new StringBuilder();
-
-            sb.AppendLine("Usage 1: {0} Foo");
-            sb.AppendLine("Usage 1: {0} Bar");
-
-            Console.WriteLine(sb.ToString(), AppDomain.CurrentDomain.FriendlyName);
+                return 1;
+            }
         }
     }
 }

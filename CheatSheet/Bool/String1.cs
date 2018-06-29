@@ -24,7 +24,7 @@ namespace CheatSheet.Bool
         }
 
         static bool StartsWithIgnoreCase(string s1, string s2) => s1.StartsWith(s2, StringComparison.OrdinalIgnoreCase);
-        static bool ContainsIgnoreCase(string s, string findMe) => -1 < s.IndexOf(findMe, StringComparison.OrdinalIgnoreCase);
+        internal static bool ContainsIgnoreCase(string s, string findMe) => -1 < s.IndexOf(findMe, StringComparison.OrdinalIgnoreCase);
         internal static bool ContainsIgnoreCase(IEnumerable<string> ss, string s) => ss.Contains(s, StringComparer.OrdinalIgnoreCase);
 
         // Cannot make it generic as '==' is unavailable for a generic type.

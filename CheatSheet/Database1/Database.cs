@@ -176,24 +176,31 @@ namespace CheatSheet.Database1
 
         static void DeleteInsert(string name)
         {
-            using (var ts = new TransactionScope())
+            try
             {
-                using (var sc = new SqlConnection(Scsb.ConnectionString))
+                using (var ts = new TransactionScope())
                 {
-                    sc.Open();
-                    using (var c = sc.CreateCommand())
+                    using (var sc = new SqlConnection(Scsb.ConnectionString))
                     {
-                        c.CommandText = "DELETE FROM Table1 WHERE Name = @Name";
-                        c.Parameters.AddWithValue("@Name", name);
-                        c.ExecuteNonQuery();
+                        sc.Open();
+                        using (var c = sc.CreateCommand())
+                        {
+                            c.CommandText = "DELETE FROM Table1 WHERE Name = @Name";
+                            c.Parameters.AddWithValue("@Name", name);
+                            c.ExecuteNonQuery();
 
-                        c.CommandText = "INSERT INTO Table1 (Name, LastEditedBy) VALUES (@Name, @LastEditedBy)";
-                        c.Parameters.AddWithValue("@LastEditedBy", Environment.UserName);
-                        c.ExecuteNonQuery();
+                            c.CommandText = "INSERT INTO Table1 (Name, LastEditedBy) VALUES (@Name, @LastEditedBy)";
+                            c.Parameters.AddWithValue("@LastEditedBy", Environment.UserName);
+                            c.ExecuteNonQuery();
+                        }
                     }
-                }
 
-                ts.Complete();
+                    ts.Complete();
+                }
+            }
+            catch
+            {
+                throw;
             }
         }
 
@@ -244,29 +251,36 @@ namespace CheatSheet.Database1
                     dt.Rows.Add(row);
                 }
 
-                using (var ts = new TransactionScope())
+                try
                 {
-                    using (var sc = new SqlConnection(Scsb.ConnectionString))
+                    using (var ts = new TransactionScope())
                     {
-                        sc.Open();
-                        using (var c = sc.CreateCommand())
+                        using (var sc = new SqlConnection(Scsb.ConnectionString))
                         {
-                            c.CommandText = string.Concat("TRUNCATE TABLE ", table);
-                            c.ExecuteNonQuery();
-                        }
-
-                        using (var sbc = new SqlBulkCopy(sc) { DestinationTableName = table })
-                        {
-                            foreach (var columnName in columns.Keys)
+                            sc.Open();
+                            using (var c = sc.CreateCommand())
                             {
-                                sbc.ColumnMappings.Add(columnName, columnName);
+                                c.CommandText = string.Concat("TRUNCATE TABLE ", table);
+                                c.ExecuteNonQuery();
                             }
 
-                            sbc.WriteToServer(dt);
-                        }
-                    }
+                            using (var sbc = new SqlBulkCopy(sc) { DestinationTableName = table })
+                            {
+                                foreach (var columnName in columns.Keys)
+                                {
+                                    sbc.ColumnMappings.Add(columnName, columnName);
+                                }
 
-                    ts.Complete();
+                                sbc.WriteToServer(dt);
+                            }
+                        }
+
+                        ts.Complete();
+                    }
+                }
+                catch
+                {
+                    throw;
                 }
             }
         }
