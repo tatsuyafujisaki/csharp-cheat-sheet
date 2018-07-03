@@ -43,35 +43,48 @@ namespace CheatSheet.Database1
                 {
                     c.CommandText = "SELECT Column1 FROM Table1 WHERE Id = @Id";
                     c.Parameters.AddWithValue("@Id", id);
+
                     return (T)c.ExecuteScalar();
                 }
             }
         }
 
-        static (byte[], bool, bool, char, DateTime, decimal, double, int, string) GetRecord(int id)
+        enum TableColumns1
+        {
+            Column1,
+            Column2,
+            Column3,
+            Column4,
+            Column5,
+            Column6,
+            Column7,
+            Column8
+        }
+
+        static (bool, char, DateTime, decimal, double, int, string, byte[])? GetRecord(int id)
         {
             using (var sc = new SqlConnection(Scsb.ConnectionString))
             {
                 sc.Open();
                 using (var c = sc.CreateCommand())
                 {
-                    c.CommandText = "SELECT VarbinaryMax1, Nullable1, Boolean1, Char1, DateTime1, Decimal1, Double1, Int1, String1 FROM Table1 WHERE Id = @Id";
+                    c.CommandText = $"SELECT {string.Join(",", Enum.GetNames(typeof(TableColumns1)))} FROM Table1 WHERE Id = @Id";
                     c.Parameters.AddWithValue("@Id", id);
                     using (var r = c.ExecuteReader())
                     {
                         if (r.Read())
                         {
-                            return ((byte[])r[0],
-                                    r.IsDBNull(1),
-                                    r.GetBoolean(2),
-                                    r.GetChar(3),
-                                    r.GetDateTime(4),
-                                    r.GetDecimal(5),
-                                    r.GetDouble(6),
-                                    r.GetInt32(7),
-                                    r.GetString(8));
+                            return (r.GetBoolean((int)TableColumns1.Column1),
+                                    r.GetChar((int)TableColumns1.Column2),
+                                    r.GetDateTime((int)TableColumns1.Column3),
+                                    r.GetDecimal((int)TableColumns1.Column4),
+                                    r.GetDouble((int)TableColumns1.Column5),
+                                    r.GetInt32((int)TableColumns1.Column6),
+                                    r.GetString((int)TableColumns1.Column7),
+                                    (byte[])r[(int)TableColumns1.Column8]);
                         }
-                        throw new ApplicationException();
+
+                        return null;
                     }
                 }
             }
@@ -84,20 +97,28 @@ namespace CheatSheet.Database1
                 sc.Open();
                 using (var c = sc.CreateCommand())
                 {
-                    c.CommandText = "SELECT String1 FROM Table1 WHERE Id = @Id";
+                    c.CommandText = "SELECT Column1 FROM Table1 WHERE Id = @Id";
                     c.Parameters.AddWithValue("@Id", id);
                     using (var r = c.ExecuteReader())
                     {
                         // Use List<T> if the result is ordered or contains duplicate records.
                         var hs = new HashSet<string>();
+
                         while (r.Read())
                         {
                             hs.Add(r.GetString(0));
                         }
+
                         return hs;
                     }
                 }
             }
+        }
+
+        enum TableColumns2
+        {
+            Column1,
+            Column2
         }
 
         static Dictionary<string, double> SelectRecordsOfMultipleColumns(int id)
@@ -107,16 +128,18 @@ namespace CheatSheet.Database1
                 sc.Open();
                 using (var c = sc.CreateCommand())
                 {
-                    c.CommandText = "SELECT String1, Double1 FROM Table1 WHERE Id = @Id";
+                    c.CommandText = $"SELECT {string.Format(",", Enum.GetNames(typeof(TableColumns2)))} FROM Table1 WHERE Id = @Id";
                     c.Parameters.AddWithValue("@Id", id);
                     using (var r = c.ExecuteReader())
                     {
                         // Use List<T, T> if the result is ordered or contains duplicate records.
                         var d = new Dictionary<string, double>();
+
                         while (r.Read())
                         {
-                            d.Add(r.GetString(0), r.GetDouble(1));
+                            d.Add(r.GetString((int)TableColumns2.Column1), r.GetDouble((int)TableColumns2.Column2));
                         }
+
                         return d;
                     }
                 }
@@ -135,6 +158,7 @@ namespace CheatSheet.Database1
                     c.Parameters.AddWithValue("@Name", name);
                     c.Parameters.AddWithValue("@BinaryFile", bs);
                     c.Parameters.AddWithValue("@LastEditedBy", Environment.UserName);
+
                     c.ExecuteNonQuery();
                 }
             }
@@ -152,6 +176,7 @@ namespace CheatSheet.Database1
                     c.Parameters.AddWithValue("@Name", name);
                     c.Parameters.AddWithValue("@BinaryFile", bs);
                     c.Parameters.AddWithValue("@LastEditedBy", Environment.UserName);
+
                     c.ExecuteNonQuery();
                 }
             }
@@ -169,6 +194,7 @@ namespace CheatSheet.Database1
                     c.Parameters.AddWithValue("@Name", name);
                     c.Parameters.AddWithValue("@BinaryFile", bs);
                     c.Parameters.AddWithValue("@LastEditedBy", Environment.UserName);
+
                     c.ExecuteNonQuery();
                 }
             }
@@ -213,6 +239,7 @@ namespace CheatSheet.Database1
                 {
                     c.CommandText = @"SELECT TOP 1 NULL FROM Table WHERE Name = @Name";
                     c.Parameters.AddWithValue("@Name", name);
+
                     // "SELECT NULL" returns an instance of DbNull, which is not null.
                     return c.ExecuteScalar() != null;
                 }
@@ -305,7 +332,7 @@ namespace CheatSheet.Database1
         // END
         // GO
         [SuppressMessage("Microsoft.Security", "CA2100")]
-        static void ExecuteStoredProcedure(string storedProcedure)
+        static (int, string) ExecuteStoredProcedure(string storedProcedure)
         {
             using (var sc = new SqlConnection(Scsb.ConnectionString))
             {
@@ -315,20 +342,17 @@ namespace CheatSheet.Database1
                     c.CommandType = CommandType.StoredProcedure;
                     c.CommandText = storedProcedure;
 
-                    // The parameter name and the parameter type must match those in the stored procedure.
-                    var error = c.Parameters.Add("Error", SqlDbType.NVarChar, -1);
-                    error.Direction = ParameterDirection.Output;
+                    // The name and the type of ParameterDirection.Output must match those in the stored procedure.
+                    var errorMessage = c.Parameters.Add("Error", SqlDbType.NVarChar, -1);
+                    errorMessage.Direction = ParameterDirection.Output;
 
-                    // The name of the parameter of ParameterDirection.ReturnValue can be anything.
+                    // The name of ParameterDirection.ReturnValue can be anything.
                     var returnValue = c.Parameters.Add("_", SqlDbType.Int);
                     returnValue.Direction = ParameterDirection.ReturnValue;
 
                     c.ExecuteNonQuery();
 
-                    if ((int)returnValue.Value != 0)
-                    {
-                        throw new ApplicationException((string)error.Value);
-                    }
+                    return ValueTuple.Create((int)returnValue.Value, (string)errorMessage.Value);
                 }
             }
         }
@@ -342,6 +366,7 @@ namespace CheatSheet.Database1
                 {
                     c.CommandText = "SELECT TOP 1 NULL FROM Table1 WHERE Column1 = @Column1 GROUP BY Column1 HAVING 1 < COUNT(*)";
                     c.Parameters.AddWithValue("@Column1", column1);
+
                     // "SELECT NULL" returns an instance of DbNull, which is not null.
                     return c.ExecuteScalar() != null;
                 }
