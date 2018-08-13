@@ -1,13 +1,13 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/a6fvpkdelilart7e?svg=true)](https://ci.appveyor.com/project/tatsuya/csharp-cheat-sheet)
 
 # Markdowns
-* [AppDomain](Markdown\AppDomain)
-* [ClickOnce](Markdown\ClickOnce)
-* [EntityFramework and ADO.NET](Markdown\EntityFramework and ADO.NET)
-* [LDAP](Markdown\LDAP)
-* [NuGet](Markdown\NuGet)
-* [Threading](Markdown\Threading)
-* [Word](Markdown\Word)
+* [AppDomain](Markdown/AppDomain.md)
+* [ClickOnce](Markdown/ClickOnce.md)
+* [EntityFramework](Markdown/EntityFramework.md)
+* [LDAP](Markdown/LDAP.md)
+* [NuGet](Markdown/NuGet.md)
+* [Threading](Markdown/Threading.md)
+* [Word](Markdown/Word.md)
 
 # Best practices for settings
 * Project > `Properties` > `Build` > `Treat warnings as errors` > `All`
